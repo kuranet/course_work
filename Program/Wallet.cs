@@ -12,10 +12,14 @@ namespace Program
         public List<Payment> history { get; private set; }
         #endregion
 
-        public Wallet(string str, int val, double sum)
+        public Wallet(string str, Currency val, double sum)
         {
+            if (str == null || str.Length < 1)
+                throw new ArgumentException ("Such name can't be used");
             name = str;
-            currency = (Currency)val;
+            currency = val;
+            if (sum < 0)
+                throw new ArgumentException("Amount of your wallet can't be less than 0");
             amount = sum;
             if (sum == 0)
                 history = new List<Payment>();
@@ -31,60 +35,43 @@ namespace Program
         {
             name = newName;
         }
-
-        public void PrintPaymentByDate(DateTime date)
-        {
-            foreach (Payment pay in history)
-            {
-                if (pay.time.Date == date)
-                {
-                    Console.WriteLine(pay.time.ToShortTimeString() + "   " + pay.sum);
-                }
-            }
-        }
-
-        public void PrintPaymentInPeriod(DateTime from, DateTime to)
-        {
-            foreach (Payment pay in history)
-            {
-                if (pay.time.Date >= from && pay.time.Date <= to)
-                {
-                    Console.WriteLine(pay.time.ToShortDateString() + "    " + pay.time.ToShortTimeString() + "   " + pay.sum);
-                }
-            }
-        }
-
         #endregion
 
         #region Operations with money
         public void Deposit(double sum)
         {
             amount += sum;
-            history.Add(new Payment(0, sum));
+            history.Add(new Payment(TypeOfPayment.Deposit, sum));
         }
 
         public void Withdrawal(double sum)
         {
+            if (sum > this.amount)
+                throw new ArgumentException("You have enought money to do it");
             amount -= sum;
-            history.Add(new Payment(2, sum));
+            history.Add(new Payment(TypeOfPayment.Withdrawal, sum));
         }
 
         public void TransferFrom(double sum, Wallet direction)
         {
+            if (sum > this.amount)
+                throw new ArgumentException("You have enought money to do it");
             this.amount -= sum;
-            this.history.Add(new Payment(1, sum));
+            this.history.Add(new Payment(TypeOfPayment.Deposit, sum));
             double tempSum = Metrics.metrics[(int)this.currency, (int)direction.currency] * sum;
             direction.amount += tempSum;
-            direction.history.Add(new Payment(1, tempSum));
+            direction.history.Add(new Payment(TypeOfPayment.Deposit, tempSum));
         }
 
         public void TransferTo(double sum, Wallet direction)
         {
             double tempSum = Metrics.metrics[(int)direction.currency, (int)this.currency] * sum;
+            if (tempSum > this.amount)
+                throw new ArgumentException("You have enought money to do it");
             this.amount -= tempSum;
-            this.history.Add(new Payment(1, tempSum));
+            this.history.Add(new Payment(TypeOfPayment.Deposit, tempSum));
             direction.amount += sum;
-            direction.history.Add(new Payment(1, sum));
+            direction.history.Add(new Payment(TypeOfPayment.Deposit, sum));
         }
         #endregion
     }

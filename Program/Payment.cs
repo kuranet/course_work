@@ -13,10 +13,10 @@ namespace Program
         public double purpose { get; private set; }
         #endregion
 
-        public Payment(int tempType, double tempSum) 
+        public Payment(TypeOfPayment tempType, double tempSum) 
         {
             time = DateTime.Now;
-            type = (TypeOfPayment)tempType;
+            type = tempType;
             sum = tempSum;
         }
 
