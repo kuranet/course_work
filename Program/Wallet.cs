@@ -15,6 +15,7 @@ namespace Program
         { 
             name = str; 
             amount = sum; 
+>>>>>>> d0a60a1... Main logic of rhe program
             if (sum == 0)
                 history = new List<Payment>();
             else
@@ -31,14 +32,24 @@ namespace Program
         }
 
         #region Operations with wallet
+<<<<<<< HEAD
+        public void ChangeName(string newName)
+=======
         public void ChangeName(string newName) 
+>>>>>>> d0a60a1... Main logic of rhe program
         {
             name = newName;
         }
 
+<<<<<<< HEAD
+        public void PrintPaymentByDate(DateTime date)
+        {
+            foreach (Payment pay in history)
+=======
         public void PrintPaymentByDate(DateTime date) 
         {
             foreach(Payment pay in history)
+>>>>>>> d0a60a1... Main logic of rhe program
             {
                 if (pay.time.Date == date)
                 {
@@ -51,7 +62,11 @@ namespace Program
         {
             foreach (Payment pay in history)
             {
+<<<<<<< HEAD
+                if (pay.time.Date >= from && pay.time.Date <= to)
+=======
                 if (pay.time.Date >= from && pay.time.Date <= to )
+>>>>>>> d0a60a1... Main logic of rhe program
                 {
                     Console.WriteLine(pay.time.ToShortDateString() + "    " + pay.time.ToShortTimeString() + "   " + pay.sum);
                 }
@@ -62,7 +77,11 @@ namespace Program
 
         #region Operations with money
         public void Deposit(double sum)
+<<<<<<< HEAD
+        {
+=======
         {            
+>>>>>>> d0a60a1... Main logic of rhe program
             amount += sum;
             history.Add(new Payment(0, sum));
         }
