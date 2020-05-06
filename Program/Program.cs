@@ -8,13 +8,17 @@ namespace Program
         static void Main(string[] args)
         {
             List<Wallet> myWallets = new List<Wallet>();
-            myWallets.Add(new Wallet("Russian Wallet", 0, 15));
-            myWallets.Add(new Wallet("Hrivna Wallet", 1, 15));
-            myWallets.Add(new Wallet("Dollar Wallet", 2, 15));
-            myWallets.Add(new Wallet("Euro Wallet", 3, 15));
+            Wallet rub = new RubWallet("Russian Wallet", 15);
+            myWallets.Add(rub);
+            myWallets.Add(new Wallet("Hrivna Wallet", 15));
+            myWallets.Add(new RubWallet("Dollar Wallet", 15));
+            myWallets.Add(new Wallet("Euro Wallet", 15));
             myWallets[1].Deposit(1500);
             myWallets[1].Withdrawal(15);
-            myWallets[1].TransferTo(10, myWallets[2]);
+            RubWallet k = (RubWallet) myWallets[2];
+            myWallets[0].TransferFrom(15, ref k);
+            myWallets[2] = k;
+            //myWallets[1].TransferTo(10, myWallets[2]);
 
             foreach (Wallet wal in myWallets)
             {
