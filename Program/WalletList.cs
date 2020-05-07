@@ -63,7 +63,17 @@ namespace Program
                 Console.WriteLine(wal.name);
                 foreach (Payment pay in wal.history)
                 {
-                    Console.WriteLine(pay.time + "      " + pay.type + "    " + pay.sum);
+                    if (pay is Transfer)
+                    {
+                        Transfer p = (Transfer)pay;
+                        if(p.from.name == wal.name)
+                            Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum +  "  To  " + p.to.name);
+                        else
+                            Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name); 
+                    }
+
+                    else
+                        Console.WriteLine(pay.time + "      " + pay.GetType().Name + "    " + pay.sum);
                 }
                 Console.WriteLine();
             }
@@ -75,7 +85,17 @@ namespace Program
             Console.WriteLine(wal.name);
             foreach (Payment pay in wal.history)
             {
-                Console.WriteLine(pay.time + "      " + pay.type + "    " + pay.sum);
+                if (pay is Transfer)
+                {
+                    Transfer p = (Transfer)pay;
+                    if (p.from.name == wal.name)
+                        Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  To  " + p.to.name);
+                    else
+                        Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
+                }
+
+                else
+                    Console.WriteLine(pay.time + "      " + pay.GetType() + "    " + pay.sum);
             }
             Console.WriteLine();
         }
@@ -90,7 +110,17 @@ namespace Program
                     Console.WriteLine(wal.name);
                     foreach (Payment pay in wal.history)
                     {
-                        Console.WriteLine(pay.time + "      " + pay.type + "    " + pay.sum);
+                        if (pay is Transfer)
+                        {
+                            Transfer p = (Transfer)pay;
+                            if (p.from.name == wal.name)
+                                Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  To  " + p.to.name);
+                            else
+                                Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
+                        }
+
+                        else
+                            Console.WriteLine(pay.time + "      " + pay.GetType() + "    " + pay.sum);
                     }
                     Console.WriteLine();
                 }
@@ -108,7 +138,17 @@ namespace Program
                 {
                     if (pay.time.Date == date)
                     {
-                        Console.WriteLine(pay.time.ToShortTimeString() + "   " + pay.type + "   " + +pay.sum);
+                        if (pay is Transfer)
+                        {
+                            Transfer p = (Transfer)pay;
+                            if (p.from.name == wal.name)
+                                Console.WriteLine(p.time.ToShortTimeString() + "      " + pay.GetType().Name + "    " + pay.sum + "  To  " + p.to.name);
+                            else
+                                Console.WriteLine(p.time.ToShortTimeString() + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
+                        }
+
+                        else
+                            Console.WriteLine(pay.time.ToShortTimeString() + "   " + pay.GetType().Name + "   " + +pay.sum);
                     }
                 }
                 Console.WriteLine();
@@ -123,11 +163,85 @@ namespace Program
                 {
                     if (pay.time.Date >= from && pay.time.Date <= to)
                     {
-                        Console.WriteLine(pay.time.ToShortDateString() + "    " + pay.time.ToShortTimeString() + "   " + pay.sum);
+                        if (pay is Transfer)
+                        {
+                            Transfer p = (Transfer)pay;
+                            if (p.from.name == wal.name)
+                                Console.WriteLine(p.time.ToShortTimeString() + "      " + pay.GetType().Name + "    " + pay.sum + "  To  " + p.to.name);
+                            else
+                                Console.WriteLine(p.time.ToShortTimeString() + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
+                        }
+                        else
+                            Console.WriteLine(pay.time.ToShortDateString() + "    " + pay.time.ToShortTimeString() + "   " + pay.sum);
                     }
                 }
             }
         }
         #endregion
+
+        public void FundsWithdrawn(Currency currency)
+        {
+            int count = 0;
+            for(OutputPurpose i = OutputPurpose.Food; i < OutputPurpose.Transfer; i++)
+            {
+                count++;
+            }
+            double[,] expenses = new double[count,2];
+            double allExpenses = 0;
+            foreach(Wallet wal in wallet)
+            {
+                if (wal.currency == currency)
+                {
+                    int n = wal.history.Count;
+                    for (int i = 0; i < n; i++)
+                    {
+                        if (wal.history[i] is OutputPayment)
+                        {
+                            OutputPayment pay = (OutputPayment)wal.history[i];
+                            expenses[(int)pay.purpose,0] += wal.history[i].sum;
+                            allExpenses += wal.history[i].sum;
+                        }
+                    }
+                }
+            }
+            for(int i = 0; i< expenses.Length/2; i++)
+            {
+                expenses[i,1] = expenses[i,0] / allExpenses;
+                Console.WriteLine((OutputPurpose)i + "    " + expenses[i, 0] + " y.e " + expenses[i, 1] * 100 + "%");
+            }
+        }
+
+        public void FundsRecived(Currency currency)
+        {
+            int count = 0;
+            for (InputPurpose i = InputPurpose.Salary; i <= InputPurpose.Else; i++)
+            {
+                count++;
+            }
+            double[,] funds = new double[count,2];
+            double allFunds = 0;
+            foreach (Wallet wal in wallet)
+            {
+                if (wal.currency == currency)
+                {
+                    int n = wal.history.Count;
+                    for (int i = 0; i < n; i++)
+                    {
+                        if (wal.history[i] is InputPayment)
+                        {
+                            InputPayment pay = (InputPayment)wal.history[i];
+                            funds[(int)pay.purpose,0] += wal.history[i].sum;
+                            allFunds += wal.history[i].sum;
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < funds.Length/2; i++)
+            {
+                funds[i,1] = Math.Round( funds[i,0] / allFunds, 5);
+                Console.WriteLine((InputPurpose)i + "    " + funds[i,0] + " y.e " + funds[i,1]*100 + "%");
+            }
+
+        }
     }
 }

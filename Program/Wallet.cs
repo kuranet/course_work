@@ -12,23 +12,32 @@ namespace Program
         public List<Payment> history { get; private set; }
         #endregion
 
-        public Wallet(string str, Currency val, double sum)
+        public Wallet(string str, Currency val)
         {
             if (str == null || str.Length < 1)
                 throw new ArgumentException ("Such name can't be used");
             name = str;
             currency = val;
-            if (sum < 0)
-                throw new ArgumentException("Amount of your wallet can't be less than 0");
-            amount = sum;
-            if (sum == 0)
-                history = new List<Payment>();
-            else
-            {
-                history = new List<Payment>();
-                history.Add(new Payment(0, sum));
-            }
+            amount = 0;
+            history = new List<Payment>();            
         }
+
+        public Wallet(string str, Currency val, double sum, InputPurpose pur)
+        {
+            if (str == null || str.Length < 1)
+                throw new ArgumentException("Such name can't be used");
+            name = str;
+            if (val == null)
+                throw new ArgumentNullException();
+            currency = val;
+            if (sum <= 0)
+                throw new ArgumentException("Amount of your wallet can't be less than 0");
+            amount = sum;            
+            history = new List<Payment>();
+            history.Add(new InputPayment( sum, pur));            
+        }
+
+
 
         #region Operations with wallet
         public void ChangeName(string newName)
@@ -38,18 +47,18 @@ namespace Program
         #endregion
 
         #region Operations with money
-        public void Deposit(double sum)
+        public void Deposit(double sum , InputPurpose pur)
         {
             amount += sum;
-            history.Add(new Payment(TypeOfPayment.Deposit, sum));
+            history.Add(new InputPayment( sum, pur));
         }
 
-        public void Withdrawal(double sum)
+        public void Withdrawal(double sum, OutputPurpose pur)
         {
             if (sum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
             amount -= sum;
-            history.Add(new Payment(TypeOfPayment.Withdrawal, sum));
+            history.Add(new OutputPayment( sum, pur));
         }
 
         public void TransferFrom(double sum, Wallet direction)
@@ -57,10 +66,11 @@ namespace Program
             if (sum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
             this.amount -= sum;
-            this.history.Add(new Payment(TypeOfPayment.Deposit, sum));
+            Transfer transfer = new Transfer(sum, this, direction);
+            this.history.Add(transfer);
             double tempSum = Metrics.metrics[(int)this.currency, (int)direction.currency] * sum;
             direction.amount += tempSum;
-            direction.history.Add(new Payment(TypeOfPayment.Deposit, tempSum));
+            direction.history.Add(transfer);
         }
 
         public void TransferTo(double sum, Wallet direction)
@@ -69,9 +79,10 @@ namespace Program
             if (tempSum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
             this.amount -= tempSum;
-            this.history.Add(new Payment(TypeOfPayment.Deposit, tempSum));
+            Transfer transfer = new Transfer(sum, this, direction);
+            this.history.Add(transfer);
             direction.amount += sum;
-            direction.history.Add(new Payment(TypeOfPayment.Deposit, sum));
+            direction.history.Add(transfer);
         }
         #endregion
     }
