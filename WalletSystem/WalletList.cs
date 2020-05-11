@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using EnumLibrary;
 
-namespace Program
+
+namespace WalletSystem
 {
-    class WalletList
+    public class WalletList
     {
         public List<Wallet> wallet;
 
@@ -241,7 +243,6 @@ namespace Program
                 funds[i,1] = Math.Round( funds[i,0] / allFunds, 5);
                 Console.WriteLine((InputPurpose)i + "    " + funds[i,0] + " y.e " + funds[i,1]*100 + "%");
             }
-
         }
     }
 }

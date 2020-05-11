@@ -1,6 +1,6 @@
-﻿namespace Program
+﻿namespace EnumLibrary
 {
-    class Metrics
+    public class Metrics
     {
         static public double[,] metrics =
             {{1, 0.3664, 0.0134, 0.0123 },

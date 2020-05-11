@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using EnumLibrary;
 
-namespace Program
+namespace WalletSystem
 {
-    public class Wallet
+    public class Wallet : IMoneyOperation, IWalletOperation
     {
         #region Properties
         public string name { get; private set; }
@@ -27,8 +28,6 @@ namespace Program
             if (str == null || str.Length < 1)
                 throw new ArgumentException("Such name can't be used");
             name = str;
-            if (val == null)
-                throw new ArgumentNullException();
             currency = val;
             if (sum <= 0)
                 throw new ArgumentException("Amount of your wallet can't be less than 0");
@@ -39,14 +38,14 @@ namespace Program
 
 
 
-        #region Operations with wallet
+        #region IWalletOperation
         public void ChangeName(string newName)
         {
             name = newName;
         }
         #endregion
 
-        #region Operations with money
+        #region IMoneyOperation
         public void Deposit(double sum , InputPurpose pur)
         {
             amount += sum;

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EnumLibrary;
 
-namespace Program
+namespace WalletSystem
 {
-    class InputPayment:Payment
+    public class InputPayment:Payment
     {
         public InputPurpose purpose { get; private set; }
         public InputPayment( double tempSum, InputPurpose pur) : base( tempSum) { purpose = pur; }

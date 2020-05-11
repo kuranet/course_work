@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EnumLibrary;
 
-namespace Program
+namespace WalletSystem
 {
-    class OutputPayment:Payment
+    public class OutputPayment:Payment
     {
         public OutputPurpose purpose { get; private set; }
         public OutputPayment( double tempSum, OutputPurpose pur) : base( tempSum) { purpose = pur; }
