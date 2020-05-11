@@ -4,10 +4,10 @@ namespace WalletSystem
 {
     interface IMoneyOperation
     {
-        void Deposit(double sum, InputPurpose pur);
-        void Withdrawal(double sum, OutputPurpose pur);
-        void TransferFrom(double sum, Wallet direction);
-        void TransferTo(double sum, Wallet direction);
+        void Deposit(decimal sum, InputPurpose pur);
+        void Withdrawal(decimal sum, OutputPurpose pur);
+        void TransferFrom(decimal sum, Wallet direction);
+        void TransferTo(decimal sum, Wallet direction);
 
     }
 }

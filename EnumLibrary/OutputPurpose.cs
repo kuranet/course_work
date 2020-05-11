@@ -7,7 +7,6 @@
         Clothes,
         Leisure,
         TravelExpenses,
-        Else,
-        Transfer
+        Else
     }
 }

@@ -5,6 +5,6 @@ namespace WalletSystem
     public class OutputPayment:Payment
     {
         public OutputPurpose purpose { get; private set; }
-        public OutputPayment( double tempSum, OutputPurpose pur) : base( tempSum) { purpose = pur; }
+        public OutputPayment( decimal tempSum, OutputPurpose pur) : base( tempSum) { purpose = pur; }
     }
 }

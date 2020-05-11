@@ -2,15 +2,15 @@
 
 namespace WalletSystem
 {
-    public class Payment
+    public abstract class Payment
     {
         #region Properties
         public DateTime time { get; private set; }
-        public double sum { get; private set; }
+        public decimal sum { get; private set; }
         
         #endregion
 
-        public Payment( double tempSum) 
+        public Payment( decimal tempSum) 
         {
             time = DateTime.Now;
             sum = tempSum;            

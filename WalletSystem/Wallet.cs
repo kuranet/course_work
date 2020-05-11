@@ -9,7 +9,7 @@ namespace WalletSystem
         #region Properties
         public string name { get; private set; }
         public Currency currency { get; private set; }
-        public double amount { get; private set; }
+        public decimal amount { get; private set; }
         public List<Payment> history { get; private set; }
         #endregion
 
@@ -23,7 +23,7 @@ namespace WalletSystem
             history = new List<Payment>();            
         }
 
-        public Wallet(string str, Currency val, double sum, InputPurpose pur)
+        public Wallet(string str, Currency val, decimal sum, InputPurpose pur)
         {
             if (str == null || str.Length < 1)
                 throw new ArgumentException("Such name can't be used");
@@ -46,13 +46,13 @@ namespace WalletSystem
         #endregion
 
         #region IMoneyOperation
-        public void Deposit(double sum , InputPurpose pur)
+        public void Deposit(decimal sum , InputPurpose pur)
         {
             amount += sum;
             history.Add(new InputPayment( sum, pur));
         }
 
-        public void Withdrawal(double sum, OutputPurpose pur)
+        public void Withdrawal(decimal sum, OutputPurpose pur)
         {
             if (sum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
@@ -60,27 +60,29 @@ namespace WalletSystem
             history.Add(new OutputPayment( sum, pur));
         }
 
-        public void TransferFrom(double sum, Wallet direction)
+        public void TransferFrom(decimal sum, Wallet direction)
         {
             if (sum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
             this.amount -= sum;
             Transfer transfer = new Transfer(sum, this, direction);
             this.history.Add(transfer);
-            double tempSum = Metrics.metrics[(int)this.currency, (int)direction.currency] * sum;
+            decimal tempSum = Metrics.metrics[(int)this.currency, (int)direction.currency] * sum;
             direction.amount += tempSum;
+            transfer = new Transfer(tempSum, this, direction);
             direction.history.Add(transfer);
         }
 
-        public void TransferTo(double sum, Wallet direction)
+        public void TransferTo(decimal sum, Wallet direction)
         {
-            double tempSum = Metrics.metrics[(int)direction.currency, (int)this.currency] * sum;
+            decimal tempSum = Metrics.metrics[(int)direction.currency, (int)this.currency] * sum;
             if (tempSum > this.amount)
                 throw new ArgumentException("You have enought money to do it");
             this.amount -= tempSum;
-            Transfer transfer = new Transfer(sum, this, direction);
+            Transfer transfer = new Transfer(tempSum, this, direction);
             this.history.Add(transfer);
             direction.amount += sum;
+            transfer = new Transfer(sum, this, direction);
             direction.history.Add(transfer);
         }
         #endregion

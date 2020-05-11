@@ -45,7 +45,7 @@ namespace WalletSystem
         // Sum of wallets' amount in he given currency 
         public void ShowAmountInCurrency(Currency type)
         {
-            double tempSum = 0;
+            decimal tempSum = 0;
             foreach (Wallet wal in wallet)
             {
                 if (wal.currency == type)
@@ -184,12 +184,12 @@ namespace WalletSystem
         public void FundsWithdrawn(Currency currency)
         {
             int count = 0;
-            for(OutputPurpose i = OutputPurpose.Food; i < OutputPurpose.Transfer; i++)
+            for(OutputPurpose i = OutputPurpose.Food; i <= OutputPurpose.Else; i++)
             {
                 count++;
             }
-            double[,] expenses = new double[count,2];
-            double allExpenses = 0;
+            decimal[,] expenses = new decimal[count,2];
+            decimal allExpenses = 0;
             foreach(Wallet wal in wallet)
             {
                 if (wal.currency == currency)
@@ -220,8 +220,8 @@ namespace WalletSystem
             {
                 count++;
             }
-            double[,] funds = new double[count,2];
-            double allFunds = 0;
+            decimal[,] funds = new decimal[count,2];
+            decimal allFunds = 0;
             foreach (Wallet wal in wallet)
             {
                 if (wal.currency == currency)
