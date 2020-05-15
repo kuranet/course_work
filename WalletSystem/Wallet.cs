@@ -6,6 +6,9 @@ namespace WalletSystem
 {
     public class Wallet : IMoneyOperation, IWalletOperation
     {
+        public delegate void OperationHandler(string message , decimal sum);
+        public event OperationHandler MoneyOperation;
+
         #region Properties
         public string name { get; private set; }
         public Currency currency { get; private set; }
@@ -20,7 +23,7 @@ namespace WalletSystem
             name = str;
             currency = val;
             amount = 0;
-            history = new List<Payment>();            
+            history = new List<Payment>();
         }
 
         public Wallet(string str, Currency val, decimal sum, InputPurpose pur)
@@ -36,8 +39,6 @@ namespace WalletSystem
             history.Add(new InputPayment( sum, pur));            
         }
 
-
-
         #region IWalletOperation
         public void ChangeName(string newName)
         {
@@ -50,41 +51,59 @@ namespace WalletSystem
         {
             amount += sum;
             history.Add(new InputPayment( sum, pur));
+            MoneyOperation?.Invoke($"Succes! \nAmount of this wallet is: ", this.amount);
         }
 
         public void Withdrawal(decimal sum, OutputPurpose pur)
         {
             if (sum > this.amount)
-                throw new ArgumentException("You have enought money to do it");
-            amount -= sum;
-            history.Add(new OutputPayment( sum, pur));
+                MoneyOperation?.Invoke($"You hane not enought money to do it \nYour amount is: ", this.amount);
+            else
+            {
+                amount -= sum;
+                history.Add(new OutputPayment(sum, pur));
+                MoneyOperation?.Invoke($"Succes! \nAmount of this wallet is: ", this.amount);
+            }
         }
 
         public void TransferFrom(decimal sum, Wallet direction)
         {
             if (sum > this.amount)
-                throw new ArgumentException("You have enought money to do it");
-            this.amount -= sum;
-            Transfer transfer = new Transfer(sum, this, direction);
-            this.history.Add(transfer);
-            decimal tempSum = Metrics.metrics[(int)this.currency, (int)direction.currency] * sum;
-            direction.amount += tempSum;
-            transfer = new Transfer(tempSum, this, direction);
-            direction.history.Add(transfer);
+                MoneyOperation?.Invoke($"You hane not enought money to do it \nYour amount is: ", this.amount);
+            else
+            {
+                this.amount -= sum;
+                Transfer transfer = new Transfer(sum, this, direction);
+                this.history.Add(transfer);
+                Metrics metr = new Metrics();
+                decimal tempSum = metr.metrics[(int)this.currency, (int)direction.currency] * sum;
+                direction.amount += tempSum;
+                transfer = new Transfer(tempSum, this, direction);
+                direction.history.Add(transfer);
+                MoneyOperation?.Invoke($"Succes! \nAmount of this wallet is: ", this.amount);
+                MoneyOperation?.Invoke($"Amount of wallet you transfer to is: ", direction.amount);
+            }
         }
 
         public void TransferTo(decimal sum, Wallet direction)
         {
-            decimal tempSum = Metrics.metrics[(int)direction.currency, (int)this.currency] * sum;
+            Metrics metr = new Metrics();
+            decimal tempSum = metr.metrics[(int)direction.currency, (int)this.currency] * sum;
             if (tempSum > this.amount)
-                throw new ArgumentException("You have enought money to do it");
-            this.amount -= tempSum;
-            Transfer transfer = new Transfer(tempSum, this, direction);
-            this.history.Add(transfer);
-            direction.amount += sum;
-            transfer = new Transfer(sum, this, direction);
-            direction.history.Add(transfer);
+                MoneyOperation?.Invoke("You hane not enought money to do it \nYour amount is: ", this.amount);
+            else
+            {
+                this.amount -= tempSum;
+                Transfer transfer = new Transfer(tempSum, this, direction);
+                this.history.Add(transfer);
+                direction.amount += sum;
+                transfer = new Transfer(sum, this, direction);
+                direction.history.Add(transfer);
+                MoneyOperation?.Invoke($"Succes! \nAmount of this wallet is: ", this.amount);
+                MoneyOperation?.Invoke($"Amount of wallet you transfer to is: ", direction.amount);
+            }
         }
         #endregion
+
     }
 }

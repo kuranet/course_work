@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using EnumLibrary;
 
-
 namespace WalletSystem
 {
     public class WalletList
