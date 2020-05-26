@@ -6,7 +6,7 @@ namespace WalletSystem
 {
     public class WalletList
     {
-        public List<Wallet> wallet;
+        public List<Wallet> wallet; // list of users wallets
 
         public WalletList() { wallet = new List<Wallet>(); }
 
@@ -110,9 +110,16 @@ namespace WalletSystem
                         else
                             Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name); 
                     }
-
+                    else if (pay is InputPayment)
+                    {
+                        InputPayment p = (InputPayment)pay;
+                        Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                    }
                     else
-                        Console.WriteLine(pay.time + "      " + pay.GetType().Name + "    " + pay.sum );
+                    {
+                        OutputPayment p = (OutputPayment)pay;
+                        Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                    }
                 }
                 Console.WriteLine();
             }
@@ -132,9 +139,16 @@ namespace WalletSystem
                     else
                         Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
                 }
-
+                else if (pay is InputPayment)
+                {
+                    InputPayment p = (InputPayment)pay;
+                    Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                }
                 else
-                    Console.WriteLine(pay.time + "      " + pay.GetType().Name + "    " + pay.sum);
+                {
+                    OutputPayment p = (OutputPayment)pay;
+                    Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                }
             }
             Console.WriteLine();
         }
@@ -159,9 +173,16 @@ namespace WalletSystem
                             else
                                 Console.WriteLine(p.time + "      " + pay.GetType().Name + "    " + pay.sum + "  From  " + p.from.name);
                         }
-
-                        else
-                            Console.WriteLine(pay.time + "      " + pay.GetType().Name + "    " + pay.sum);
+                        else if (pay is InputPayment)
+                        {
+                            InputPayment p = (InputPayment)pay;
+                            Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                        }
+                        else 
+                        {
+                            OutputPayment p = (OutputPayment)pay;
+                            Console.WriteLine(p.time + "      " + p.GetType().Name + "    " + p.sum + "   " + p.purpose);
+                        }
                     }
                     Console.WriteLine();
                 }
@@ -172,6 +193,7 @@ namespace WalletSystem
         #endregion
 
         #region Show Payment by date
+        // Show payments in current date
         public void ShowPaymentByDate(DateTime date)
         {
             int numOfPay = 0;
@@ -205,6 +227,7 @@ namespace WalletSystem
             }
         }
 
+        // Show payments in current perion of time
         public void ShowPaymentInPeriod(DateTime from, DateTime to)
         {
             int numOfPay = 0;
@@ -237,6 +260,7 @@ namespace WalletSystem
         }
         #endregion
 
+        // Show data in percents of withdrawn funds
         public void FundsWithdrawn(Currency currency)
         {
             int count = 0;
@@ -274,6 +298,7 @@ namespace WalletSystem
             Console.WriteLine();
         }
 
+        // Show data in percents of recived funds
         public void FundsRecived(Currency currency)
         {
             int count = 0;
@@ -311,7 +336,7 @@ namespace WalletSystem
             Console.WriteLine();
         }
 
-
+        // Find which currency's sumbol should be added
         static string FindCurrency(Currency currency)
         {
             string val = "";

@@ -4,7 +4,7 @@ namespace EnumLibrary
 {
     public class Metrics
     {
-        public decimal[,] metrics;
+        public decimal[,] metrics { get; private set; }
             
         public Metrics() 
         {
